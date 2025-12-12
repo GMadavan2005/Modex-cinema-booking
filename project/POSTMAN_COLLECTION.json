@@ -1,0 +1,299 @@
+{
+  "info": {
+    "name": "Ticket Booking API",
+    "description": "Complete API collection for testing the Ticket Booking System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000/api",
+      "type": "string"
+    },
+    {
+      "key": "show_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/../health",
+          "host": ["{{base_url}}"],
+          "path": ["..", "health"]
+        },
+        "description": "Check if the API is running"
+      }
+    },
+    {
+      "name": "Shows",
+      "item": [
+        {
+          "name": "Create Show",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('show_id', response.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Broadway Musical Night\",\n  \"start_time\": \"2024-12-31T19:00:00Z\",\n  \"total_seats\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/show",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "show"]
+            },
+            "description": "Create a new show/event with specified seats"
+          }
+        },
+        {
+          "name": "Get All Shows",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shows",
+              "host": ["{{base_url}}"],
+              "path": ["shows"]
+            },
+            "description": "Retrieve all shows ordered by start time"
+          }
+        },
+        {
+          "name": "Get Show by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shows/{{show_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "{{show_id}}"]
+            },
+            "description": "Get details of a specific show"
+          }
+        },
+        {
+          "name": "Get Allocated Seats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shows/{{show_id}}/allocated-seats",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "{{show_id}}", "allocated-seats"]
+            },
+            "description": "Get list of all booked seat numbers for a show"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking - Single Seat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('booking_id', response.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"John Doe\",\n  \"seats\": [1]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Book a single seat"
+          }
+        },
+        {
+          "name": "Create Booking - Multiple Seats",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"Jane Smith\",\n  \"seats\": [2, 3, 4]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Book multiple seats at once"
+          }
+        },
+        {
+          "name": "Create Booking - Already Booked (Should Fail)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"Bob Johnson\",\n  \"seats\": [1]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Try to book an already booked seat - should fail"
+          }
+        },
+        {
+          "name": "Create Booking - Invalid Seat Number (Should Fail)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"Test User\",\n  \"seats\": [999]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Try to book a seat number that exceeds total seats - should fail"
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/booking/{{booking_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["booking", "{{booking_id}}"]
+            },
+            "description": "Retrieve booking details by ID"
+          }
+        },
+        {
+          "name": "Get All Bookings for Show",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shows/{{show_id}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["shows", "{{show_id}}", "bookings"]
+            },
+            "description": "Get all bookings for a specific show"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Concurrency Tests",
+      "item": [
+        {
+          "name": "Concurrent Booking Test 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"Concurrent User 1\",\n  \"seats\": [10, 11]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Run this simultaneously with Test 2 to verify concurrency handling"
+          }
+        },
+        {
+          "name": "Concurrent Booking Test 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"show_id\": \"{{show_id}}\",\n  \"user_name\": \"Concurrent User 2\",\n  \"seats\": [10, 11]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/booking",
+              "host": ["{{base_url}}"],
+              "path": ["booking"]
+            },
+            "description": "Run this simultaneously with Test 1 - only one should succeed"
+          }
+        }
+      ]
+    }
+  ]
+}
