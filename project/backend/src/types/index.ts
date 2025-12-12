@@ -1,3 +1,5 @@
+// -------------------- SHOW TYPES --------------------
+
 export interface Show {
   id: string;
   name: string;
@@ -22,16 +24,6 @@ export interface CreateShowRequest {
   description?: string;
 }
 
-export interface Booking {
-  id: string;
-  show_id: string;
-  user_name: string;
-  seats: number[];
-  status: 'PENDING' | 'CONFIRMED' | 'FAILED';
-  created_at: string;
-  updated_at: string;
-}
-
 export interface CreateShowData {
   name: string;
   start_time: string;
@@ -42,11 +34,34 @@ export interface CreateShowData {
   description?: string;
 }
 
+// -------------------- BOOKING TYPES --------------------
+
+export interface Booking {
+  id: string;
+  show_id: string;
+  user_name: string;
+  seats: number[];
+  status: 'PENDING' | 'CONFIRMED' | 'FAILED';
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CreateBookingData {
   show_id: string;
   user_name: string;
   seats: number[];
 }
+
+// -------------------- FIXED FINAL TYPE --------------------
+// This matches your controllers + services EXACTLY
+export interface CreateBookingRequest {
+  show_id: string;                    // FIXED: snake_case
+  user_name: string;                  // FIXED: snake_case
+  seats: number[];                    // FIXED: number[]
+  foodItems?: { id: number; quantity: number }[];
+}
+
+// -------------------- API RESPONSE --------------------
 
 export interface ApiResponse<T = any> {
   success: boolean;

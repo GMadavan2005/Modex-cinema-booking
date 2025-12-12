@@ -4,10 +4,8 @@
   "description": "Ticket booking system backend with PostgreSQL",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "start": "node dist/index.js"
   },
   "keywords": ["ticket-booking", "postgresql", "express"],
   "author": "",

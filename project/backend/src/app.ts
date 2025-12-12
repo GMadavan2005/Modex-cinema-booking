@@ -28,6 +28,9 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/api', showRoutes);
 app.use('/api', bookingRoutes);
 
+// ❌ FRONTEND SERVING WAS HERE — REMOVED
+// (Server.ts will handle this, not app.ts)
+
 app.use(errorHandler);
 
 export default app;

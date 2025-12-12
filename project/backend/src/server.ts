@@ -1,29 +1,17 @@
-import dotenv from 'dotenv';
-import app from './app';
-import { testConnection } from './config/database';
+import path from "path";
+import app from "./app";
+import express from "express";
 
-dotenv.config();
+const PORT = process.env.PORT || 8080;
 
-const PORT = process.env.PORT || 4000;
+const frontendPath = path.join(__dirname, "../../dist");
 
-async function startServer() {
-  try {
-    const dbConnected = await testConnection();
+app.use(express.static(frontendPath));
 
-    if (!dbConnected) {
-      console.error('Failed to connect to database. Exiting...');
-      process.exit(1);
-    }
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log(`Health check: http://localhost:${PORT}/health`);
-      console.log(`API base URL: http://localhost:${PORT}/api`);
-    });
-  } catch (error) {
-    console.error('Error starting server:', error);
-    process.exit(1);
-  }
-}
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
